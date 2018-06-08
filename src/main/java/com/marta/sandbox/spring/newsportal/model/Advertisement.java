@@ -1,11 +1,20 @@
-package com.marta.sandbox.spring.newsportal.entity;
+package com.marta.sandbox.spring.newsportal.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import java.util.UUID;
 
 @Entity
-public class Ad extends AbstractEntity {
+public class Advertisement {
+
+    @Id
+    @Column (length = 40)
+    protected String id = UUID.randomUUID().toString();
+
+    @Column(name = "timestamp")
+    private Long date;
 
     @Column (nullable = false, length = 63)
     private String title;
@@ -21,6 +30,22 @@ public class Ad extends AbstractEntity {
 
     @ManyToOne
     private Category category;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Long getDate() {
+        return date;
+    }
+
+    public void setDate(Long date) {
+        this.date = date;
+    }
 
     public String getTitle() {
         return title;

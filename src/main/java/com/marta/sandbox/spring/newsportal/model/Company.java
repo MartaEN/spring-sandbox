@@ -1,10 +1,15 @@
-package com.marta.sandbox.spring.newsportal.entity;
+package com.marta.sandbox.spring.newsportal.model;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
-public class Company extends AbstractEntity {
+public class Company {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private long id;
 
     @Column (nullable = false)
     private String name;
@@ -16,7 +21,15 @@ public class Company extends AbstractEntity {
     private String address;
 
     @OneToMany
-    private List<Ad> adList;
+    private List<Advertisement> advertisementList;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -42,11 +55,11 @@ public class Company extends AbstractEntity {
         this.address = address;
     }
 
-    public List<Ad> getAdList() {
-        return adList;
+    public List<Advertisement> getAdvertisementList() {
+        return advertisementList;
     }
 
-    public void setAdList(List<Ad> adList) {
-        this.adList = adList;
+    public void setAdvertisementList(List<Advertisement> advertisementList) {
+        this.advertisementList = advertisementList;
     }
 }
