@@ -3,6 +3,7 @@ package com.marta.sandbox.spring.avito.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Entity
@@ -19,9 +20,11 @@ public class Advertisement {
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     private Date publishedDate;
 
+    @Size(min=2, max=63, message = "{validation.title.size}")
     @Column(name = "title", nullable = false, length = 63)
     private String title;
 
+    @Size(min=100, message = "{validation.content.size}")
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 

@@ -6,6 +6,7 @@ import com.marta.sandbox.spring.avito.service.AdvertisementService;
 import com.marta.sandbox.spring.avito.service.CategoryService;
 import com.marta.sandbox.spring.avito.web.ajax.AdvertisementsAjax;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -13,8 +14,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Locale;
 
 @Controller
 @RequestMapping("/advertisements")
@@ -26,6 +30,9 @@ public class AdvertisementController {
 	
 	@Autowired
 	private CategoryService categoryService;
+
+	@Autowired
+	private MessageSource messageSource;
 	
 	/**
 	 * Метод перенаправляет клиента с адреса https://localhost:8080/avito/advertisements
@@ -60,16 +67,34 @@ public class AdvertisementController {
 	}
 	
 	@RequestMapping(method=RequestMethod.POST)
-	public String add(@ModelAttribute("advertisement") Advertisement advertisement, BindingResult bindingResult, @RequestParam("categoryId") Long categoryId){
+	public String add(Model uiModel,
+					  @ModelAttribute("advertisement") @Valid Advertisement advertisement,
+					  BindingResult bindingResult,
+					  @RequestParam("categoryId") Long categoryId,
+					  Locale locale,
+					  RedirectAttributes redirectAttributes){
 		
 		Category category = categoryService.get(categoryId);
+
+		// Проверяем форму на наличие ошибок
 		if(bindingResult.hasErrors() || category==null){
-			
-			return "redirect:/advertisements/add";
+			// Если ошибка найдена, то заново создаем объект article для формы
+			uiModel.addAttribute( "advertisement", advertisement)
+					// список категорий для выбора категорий в форме
+					.addAttribute ( "categories", categoryService.getAll())
+					// и добавляем сообщение о результате добавления статьи
+					.addAttribute ( "message" , messageSource.getMessage ( "ad_create_fail" ,
+							new Object []{}, locale ) );
+			return "advertisement/add";
 			
 		}
+		// Если валидация прошла успешно, то задаем категорию вновь созданного объявления
 		advertisement.setCategory(category);
+		// Сохраняем объявление
 		advertisementService.save(advertisement);
+		// Редиректим юзера на главную страницу, выводя сообщение об успехе размещения объявления
+		redirectAttributes.addFlashAttribute ( "message" ,
+				messageSource.getMessage ( "ad_create_success", new Object []{}, locale ));
 		return "redirect:/";
 	}
 
@@ -112,5 +137,5 @@ public class AdvertisementController {
 		
 		return responsive;
 
-     }
+	}
 }

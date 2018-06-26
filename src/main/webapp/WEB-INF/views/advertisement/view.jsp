@@ -1,50 +1,24 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-    <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-        <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-            <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri = "http://www.springframework.org/tags" prefix = "spring" %>
 
-                <c:set value="${pageContext.request.contextPath}" var="contextPath" />
-                <c:set value="${contextPath}/resources" var="resPath" />
+<c:set value="${pageContext.request.contextPath}" var="contextPath" />
+<c:set value="${contextPath}/resources" var="resPath" />
+
+<spring:message code = "label_date" var = "labelDate" />
+<spring:message code = "label_company" var = "labelCompany" />
+<spring:message code = "label_category" var = "labelCategory" />
+
 <!DOCTYPE>
 <html>
 
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Доска объявлений</title>
-
-    <link href="${resPath}/style.css" rel="stylesheet" type="text/css" />
-    <script src="${resPath}/assets/ckeditor/ckeditor.js"></script>
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-</head>
+<jsp:include page="../fragments/head_ckeditor.jsp"/>
 
 <body>
-    <div id="templatemo_header_wrapper">
-        <div id="templatemo_header">
 
-            <div id="site_title">
-
-            </div>
-
-            <div id="templatemo_rss">
-                <a href="" target="_parent">SUBSCRIBE<br /><span>OUR FEED</span></a>
-            </div>
-
-        </div>
-        <!-- end of header -->
-
-        <div id="templatemo_menu">
-
-            <ul>
-                <li><a href="${contextPath}">Главная</a></li>
-                <li><a href="${contextPath}/advertisements/add">Разместить объявление</a></li>
-            </ul>
-
-        </div>
-        <!-- end of templatemo_menu -->
-
-    </div>
-    <!-- end of header wrapper -->
+    <jsp:include page="../fragments/header.jsp"/>
 
     <div id="templatemo_main_wrapper">
         <div id="templatemo_add_content_wrapper">
@@ -55,15 +29,15 @@
 
                     <div class='post_section view'>
                         <h2><a class='advertisement__title' href=''></a>${advertisement.title}</h2>
-                        <strong>Дата: </strong><span class='advertisement__date'>
+                        <strong>${labelDate}: </strong><span class='advertisement__date'>
                         <fmt:formatDate pattern="yyyy-MM-dd" value="${advertisement.publishedDate}" /></span> |
-                        <strong>Рекламодатель: </strong> <span class='advertisement__company'>${advertisement.company.name}</span>
+                        <strong>${labelCompany}: </strong> <span class='advertisement__company'>${advertisement.company.name}</span>
                         <div class="cleaner"></div>
                         <p>
                             <div class='advertisement__content view'>${advertisement.content}</div>
                             <div class='cleaner'></div>
                             <p>
-                                <div class='category view'>Категория: <span>${advertisement.category.name}</span></div>
+                                <div class='category view'>${labelCategory}: <span>${advertisement.category.name}</span></div>
                     </div>
 
                 </c:if>
@@ -72,10 +46,6 @@
         </div>
     </div>
 
-    <div id="templatemo_footer_wrapper">
-        <div id="templatemo_footer">
-            Copyright © 2018 <a href="#">YET ANOTHER AVITO</a> |
-        </div>
-    </div>
+    <jsp:include page="../fragments/footer.jsp"/>
 
 </body>

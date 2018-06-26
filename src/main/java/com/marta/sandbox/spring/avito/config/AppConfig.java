@@ -30,7 +30,7 @@ public class AppConfig {
 		dataSource.setUrl("jdbc:postgresql://localhost:5432/avito");
 		dataSource.setUsername("postgres");
 		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setPassword("123");
+		dataSource.setPassword("Chip&Da1e");
 		return dataSource;
 	}
 	
