@@ -39,6 +39,10 @@ public class Advertisement {
     @JoinColumn(name="category_id")
     private Category category;
 
+    @ManyToOne
+    @JoinColumn(name="user_id")
+    private User user;
+
     public Long getId() {
         return id;
     }
@@ -93,5 +97,13 @@ public class Advertisement {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

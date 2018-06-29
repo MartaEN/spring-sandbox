@@ -33,6 +33,23 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 	}
 
 	@Override
+	@Transactional
+	public void update(Advertisement advertisement) {
+		Advertisement updatableAdvertisement = advertisementRepository.findOne(advertisement.getId());
+		updatableAdvertisement.setContent(advertisement.getContent());
+		updatableAdvertisement.setTitle(advertisement.getTitle());
+		if(advertisement.getCategory()!=null)
+			updatableAdvertisement.setCategory(advertisement.getCategory());
+		advertisementRepository.save(updatableAdvertisement);
+	}
+
+	@Override
+	@Transactional
+	public void delete(Long id) {
+		advertisementRepository.delete(id);
+	}
+
+	@Override
 	@Transactional(readOnly=true)
 	public Page<Advertisement> getByCategoryId(Long id, Pageable pageable) {
 		return advertisementRepository.findByCategoryId(id, pageable);

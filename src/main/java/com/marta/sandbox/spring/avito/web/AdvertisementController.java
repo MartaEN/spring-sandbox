@@ -4,12 +4,14 @@ import com.google.common.collect.Lists;
 import com.marta.sandbox.spring.avito.domain.*;
 import com.marta.sandbox.spring.avito.service.AdvertisementService;
 import com.marta.sandbox.spring.avito.service.CategoryService;
+import com.marta.sandbox.spring.avito.service.UserService;
 import com.marta.sandbox.spring.avito.web.ajax.AdvertisementsAjax;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,7 +25,9 @@ import java.util.Locale;
 @Controller
 @RequestMapping("/advertisements")
 public class AdvertisementController {
-	
+
+	@Autowired
+	private UserService userService;
 	
 	@Autowired
 	private AdvertisementService advertisementService;
@@ -73,11 +77,9 @@ public class AdvertisementController {
 					  @RequestParam("categoryId") Long categoryId,
 					  Locale locale,
 					  RedirectAttributes redirectAttributes){
-		
-		Category category = categoryService.get(categoryId);
 
 		// Проверяем форму на наличие ошибок
-		if(bindingResult.hasErrors() || category==null){
+		if(bindingResult.hasErrors() || categoryId.equals(0L)){
 			// Если ошибка найдена, то заново создаем объект article для формы
 			uiModel.addAttribute( "advertisement", advertisement)
 					// список категорий для выбора категорий в форме
@@ -86,15 +88,21 @@ public class AdvertisementController {
 					.addAttribute ( "message" , messageSource.getMessage ( "ad_create_fail" ,
 							new Object []{}, locale ) );
 			return "advertisement/add";
-			
 		}
-		// Если валидация прошла успешно, то задаем категорию вновь созданного объявления
+		//Получаем логин пользователя, публикующего объявление
+		String currentLogin = SecurityContextHolder.getContext().getAuthentication().getName();
+		//По логину находим автора
+		User user = userService.getByLogin(currentLogin);
+		//Ищем категорию по id категории
+		Category category = categoryService.get(categoryId);
+		//Если валидация прошла успешно, то задаем категорию вновь созданной статьи
 		advertisement.setCategory(category);
-		// Сохраняем объявление
+		//Устанавливаем автора
+		advertisement.setUser(user);
+		//сохраняем статью
 		advertisementService.save(advertisement);
-		// Редиректим юзера на главную страницу, выводя сообщение об успехе размещения объявления
-		redirectAttributes.addFlashAttribute ( "message" ,
-				messageSource.getMessage ( "ad_create_success", new Object []{}, locale ));
+		//редиректим юзера на главную страницу, выводя сообщение об успехе добавления статьи
+		redirectAttributes.addFlashAttribute("message", messageSource.getMessage("article_create_success", new Object[]{}, locale));
 		return "redirect:/";
 	}
 
